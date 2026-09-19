@@ -1,0 +1,28 @@
+name: Build Windows EXE
+
+# هم با هر تغییر در کد بیلد می‌گیرد، هم دکمهٔ دستی در تب Actions دارد
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest   # یک ویندوز واقعی روی سرور گیت‌هاب
+    steps:
+      - name: دانلود سورس کد
+        uses: actions/checkout@v4
+
+      - name: نصب Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: کش وابستگی‌ها (بیلدهای بعدی را سریع می‌کند)
+        uses: Swatinem/rust-cache@v2
+
+      - name: کامپایل
+        run: cargo build --release
+
+      - name: آماده‌سازی فایل خروجی برای دانلود
+        uses: actions/upload-artifact@v4
+        with:
+          name: termplayer
+          path: target/release/termplayer.exe
